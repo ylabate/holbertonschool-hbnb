@@ -47,8 +47,8 @@ direction BT
     }
 
     class Amenity {
-	    name: str
-	    description: str
+	    - name: str
+	    - description: str
         + create(...) Amenity
         + get(id) Amenity
         + update(data)
