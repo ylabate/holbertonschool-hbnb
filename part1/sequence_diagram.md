@@ -1,3 +1,5 @@
+### Register User 
+
 ```mermaid
 sequenceDiagram
     participant User as User
@@ -19,5 +21,31 @@ sequenceDiagram
         DB-->>Logic: token
         Logic-->>API: token
         API-->>User: token
+    end
+```
+
+### Register Place
+
+```mermaid
+sequenceDiagram
+    participant User as User
+    participant API as API
+    participant Logic
+    participant DB as DataBase
+
+    User->>API: User token & Place info
+    API->>Logic: Register Place
+
+    Logic->>DB: Validate Token
+    DB-->>Logic: Validation Result (Valid/Invalid)
+
+    alt invalide token
+        Logic-->>API: error (incorrect token)
+        API-->>User: error message
+    else valide token
+        Logic->>DB: Save Place info
+        DB-->>Logic: Place id
+        Logic-->>API: Place id
+        API-->>User: Place id
     end
 ```
