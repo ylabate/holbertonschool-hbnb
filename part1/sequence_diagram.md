@@ -75,3 +75,20 @@ sequenceDiagram
         API-->>User: Review id
     end
 ```
+
+### Fetch place
+
+```mermaid
+sequenceDiagram
+    participant User as User
+    participant API as API
+    participant DB as DataBase
+
+    User->>API: Fetch Place List
+
+    API->>DB: Get List
+
+    DB-->>API: Place List
+
+    API-->>User: Place List
+```
