@@ -49,3 +49,29 @@ sequenceDiagram
         API-->>User: Place id
     end
 ```
+
+### Register review
+
+```mermaid
+sequenceDiagram
+    participant User as User
+    participant API as API
+    participant Logic
+    participant DB as DataBase
+
+    User->>API: User token & Review info
+    API->>Logic: Register review
+
+    Logic->>DB: Validate Token
+    DB-->>Logic: Validation Result (Valid/Invalid)
+
+    alt invalide token
+        Logic-->>API: error (incorrect token)
+        API-->>User: error message
+    else valide token
+        Logic->>DB: Save Review
+        DB-->>Logic: Review id
+        Logic-->>API: Review id
+        API-->>User: Review id
+    end
+```
