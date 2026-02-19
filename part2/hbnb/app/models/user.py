@@ -1,7 +1,7 @@
 from entity import Entity
 
 
-class user(Entity):
+class User(Entity):
     def __init__(self, first_name: str, last_name: str, email: str, password: str, is_admin: bool):
         super().__init__()
         self.first_name = first_name
