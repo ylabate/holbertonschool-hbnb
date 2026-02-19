@@ -1,4 +1,4 @@
-from entity import Entity
+from app.models.entity import Entity
 
 
 class Amenity(Entity):

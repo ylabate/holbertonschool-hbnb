@@ -1,9 +1,10 @@
-from entity import Entity
-from user import User
+from app.models.entity import Entity
+from app.models.user import User
 
 
 class Place(Entity):
-    def __init__(self, title: str, description: str, price: str, latitude: float, longitude: float, owner: User):
+    def __init__(self, title: str, description: str, price: str,
+                 latitude: float, longitude: float, owner: User):
         super().__init__()
         self.title = title
         self.description = description
