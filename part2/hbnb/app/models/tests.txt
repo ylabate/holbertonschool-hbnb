@@ -1,0 +1,114 @@
+>>> from app.models.entity import Entity
+>>> from app.models.user import User
+>>> from app.models.amenity import Amenity
+>>> from app.models.place import Place
+>>> from app.models.review import Review
+>>> import time
+>>> from datetime import datetime
+
+# Entity
+>>> entity = Entity()
+>>> isinstance(entity.id, str)
+True
+>>> len(entity.id) == 36
+True
+>>> isinstance(entity.created_at, datetime)
+True
+>>> isinstance(entity.updated_at, datetime)
+True
+>>> old_updated_at = entity.updated_at
+>>> time.sleep(0.001)
+>>> entity.save()
+>>> entity.updated_at > old_updated_at
+True
+
+# User
+>>> user = User("John", "Doe", "john@example.com", "password", False)
+>>> user.first_name
+'John'
+>>> user.last_name
+'Doe'
+>>> user.email
+'john@example.com'
+>>> user.is_admin
+False
+>>> user.update({"first_name": "Jane"})
+>>> user.first_name
+'Jane'
+>>> user.update({"email": "jane@example.com"})
+>>> user.email
+'jane@example.com'
+
+# Amenity
+>>> amenity = Amenity("WiFi", "High speed internet")
+>>> amenity.name
+'WiFi'
+>>> amenity.description
+'High speed internet'
+>>> amenity.update({"name": "Fiber WiFi"})
+>>> amenity.name
+'Fiber WiFi'
+
+# Place
+>>> owner = User("Alice", "Smith", "alice@example.com", "password", True)
+>>> place = Place("Cozy Apartment", "Near city center", "100", 40.7128, -74.0060, owner)
+>>> place.title
+'Cozy Apartment'
+>>> place.price
+'100'
+>>> place.latitude
+40.7128
+>>> place.owner.first_name
+'Alice'
+>>> place.add_amenity(amenity)
+>>> len(place.amenities)
+1
+>>> place.amenities[0].name
+'Fiber WiFi'
+
+# Review
+>>> review = Review("Great place!", 5, user, place)
+>>> review.comment
+'Great place!'
+>>> review.rating
+5
+>>> review.user.first_name
+'Jane'
+>>> review.place.title
+'Cozy Apartment'
+>>> place.add_review(review)
+>>> len(place.reviews)
+1
+>>> place.reviews[0].comment
+'Great place!'
+
+# Additional Tests
+# ID Uniqueness
+>>> user1 = User("U1", "L1", "u1@e.com", "pwd", False)
+>>> user2 = User("U2", "L2", "u2@e.com", "pwd", False)
+>>> user1.id != user2.id
+True
+
+# Multiple Relationships
+>>> amenity2 = Amenity("Pool", "Swimming pool")
+>>> place.add_amenity(amenity2)
+>>> len(place.amenities)
+2
+>>> place.amenities[1].name
+'Pool'
+
+>>> user3 = User("Bob", "Brown", "bob@e.com", "pwd", False)
+>>> review2 = Review("Nice pool!", 4, user3, place)
+>>> place.add_review(review2)
+>>> len(place.reviews)
+2
+>>> place.reviews[1].comment
+'Nice pool!'
+>>> place.reviews[1].rating
+4
+
+# Type Checks
+>>> isinstance(review.rating, int)
+True
+>>> isinstance(place.latitude, float)
+True
