@@ -1,13 +1,13 @@
-from entity import Entity
-from place import Place
-from user import User
+from app.models.entity import Entity
+from app.models.place import Place
+from app.models.user import User
 
 
-class Review(Entity, Place, User):
+class Review(Entity):
     def __init__(self, comment: str, rating: int, user: User, place: Place):
 
         super().__init__()
         self.comment = comment
-        self.ratin = rating
+        self.rating = rating
         self.user = user
         self.place = place
