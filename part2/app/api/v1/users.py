@@ -25,21 +25,22 @@ user_model_response = api.inherit(
 class UserList(Resource):
     @api.marshal_with(user_model_response, as_list=True)
     def get(self):
+        """Retrieve all users"""
         return facade.get_all_user(), 200
 
-    @api.response(400, "Invalide input data")
-    @api.response(201, "Account created succefully")
+    @api.response(400, "Invalid input data")
+    @api.response(201, "Account created successfully")
     @api.expect(user_model, validate=True)
     @api.marshal_with(user_model_response)
     def post(self):
+        """Create a new user"""
         user_data = api.payload
         if facade.get_user_by_email(user_data["email"]):
             api.abort(400, "Email already registered")
         try:
-            new_user = facade.create_user(user_data)
+            return facade.create_user(user_data), 201
         except ValueError as error:
             api.abort(400, error)
-        return new_user, 201
 
 
 @api.route("/<user_id>")
@@ -48,6 +49,7 @@ class UserResource(Resource):
     @api.response(200, "User returned correctly")
     @api.marshal_with(user_model_response)
     def get(self, user_id):
+        """Get user details by ID"""
         user_data = facade.get_user(user_id)
         if user_data:
             return user_data, 200
@@ -56,18 +58,18 @@ class UserResource(Resource):
     @api.response(400, "Invalid input data")
     @api.response(409, "Email already registered")
     @api.response(200, "User updated correctly")
-    @api.expect(user_model)
+    @api.expect(user_model, validate=True)
     @api.marshal_with(user_model_response)
     def put(self, user_id):
+        """Update user information with email conflict checking"""
         user_data = api.payload
 
         if not facade.get_user(user_id):
-            api.abort(404, "User doesnt exist")
+            api.abort(404, "User doesn\'t exist")
 
-        if user_data.get("email"):
-            user_with_email = facade.get_user_by_email(user_data["email"])
-            if user_with_email and user_with_email.id != user_id:
-                api.abort(409, "Email already registered")
+        user_with_email = facade.get_user_by_email(user_data["email"])
+        if user_with_email and user_with_email.id != user_id:
+            api.abort(409, "Email already registered")
         try:
             return facade.update_user(user_id, user_data), 200
         except ValueError as error:
