@@ -2,7 +2,7 @@ from app.models.entity import Entity
 
 
 class Amenity(Entity):
-    def __init__(self, name: str, description: str = None):
+    def __init__(self, name: str, description: str):
         super().__init__()
         self.name = name
         self.description = description
@@ -24,3 +24,21 @@ class Amenity(Entity):
         if len(value) > 50:
             raise ValueError("name must be at most 50 characters")
         self._name = value
+
+    @property
+    def description(self):
+        return self._description
+
+    @description.setter
+    def description(self, value: str):
+
+        if not isinstance(value, str):
+            raise TypeError("description must be a string")
+        value = value.strip()
+
+        if not value:
+            raise ValueError("description is required")
+
+        if len(value) > 500:
+            raise ValueError("description must be at most 500 characters")
+        self._description = value
