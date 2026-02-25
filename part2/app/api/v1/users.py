@@ -10,8 +10,12 @@ user_model = api.model(
         "first_name": fields.String(
             required=True, description="First name of the user"
         ),
-        "last_name": fields.String(required=True, description="Last name of the user"),
-        "email": fields.String(required=True, description="Email of the user"),
+        "last_name": fields.String(
+            required=True, description="Last name of the user"
+        ),
+        "email": fields.String(
+            required=True, description="Email of the user"
+        ),
     },
     strict=True,
 )
@@ -65,7 +69,7 @@ class UserResource(Resource):
         user_data = api.payload
 
         if not facade.get_user(user_id):
-            api.abort(404, "User doesn\'t exist")
+            api.abort(404, "User doesn't exist")
 
         user_with_email = facade.get_user_by_email(user_data["email"])
         if user_with_email and user_with_email.id != user_id:
