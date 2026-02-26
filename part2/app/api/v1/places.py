@@ -66,7 +66,6 @@ class PlaceResource(Resource):
     @api.response(200, 'Place updated successfully')
     @api.response(404, 'Place not found')
     @api.response(400, 'Invalid input data')
-    @api.marshal_with(place_model_response)
     def put(self, place_id):
         """Update a place's information"""
         place_data = api.payload

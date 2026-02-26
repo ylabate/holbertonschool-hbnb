@@ -60,6 +60,8 @@ class HBnBFacade:
         place = Place(**place_data)
 
         for amenity in amenities:
+            if not self.amenity_repo.get(amenity):
+                raise ValueError("amenities id is not a valid id")
             place.add_amenity(amenity)
 
         self.place_repo.add(place)
