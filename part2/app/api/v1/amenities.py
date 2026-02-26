@@ -7,7 +7,8 @@ api = Namespace("amenities", description="Amenities operations")
 amenity_model = api.model(
     "AmenityModel",
     {
-        "name": fields.String(required=True, description="Name of the amenity"),
+        "name": fields.String(
+            required=True, description="Name of the amenity"),
         "description": fields.String(
             required=False, description="Description of the amenity"
         ),
@@ -16,7 +17,8 @@ amenity_model = api.model(
 )
 
 amenity_model_response = api.inherit(
-    "AmenityResponse", amenity_model, {"id": fields.String(description="Amenity ID")}
+    "AmenityResponse", amenity_model,
+    {"id": fields.String(description="Amenity ID")}
 )
 
 
