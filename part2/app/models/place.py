@@ -4,14 +4,14 @@ from app.models.user import User
 
 class Place(Entity):
     def __init__(self, title: str, description: str, price: float,
-                 latitude: float, longitude: float, owner: User):
+                 latitude: float, longitude: float, owner_id: str):
         super().__init__()
         self.title = title
         self.description = description
         self.price = price
         self.latitude = latitude
         self.longitude = longitude
-        self.owner = owner
+        self.owner_id = owner_id
         self.reviews = []  # List to store related reviews
         self.amenities = []  # List to store related amenities
 
@@ -19,7 +19,7 @@ class Place(Entity):
         """Add a review to the place."""
         self.reviews.append(review)
 
-    def add_amenity(self, amenity):
+    def add_amenity(self, amenity: str):
         """Add an amenity to the place."""
         self.amenities.append(amenity)
 
@@ -113,14 +113,11 @@ class Place(Entity):
         self._longitude = value
 
     @property
-    def owner(self):
-        return self._owner
+    def owner_id(self):
+        return self._owner_id
 
-    @owner.setter
-    def owner(self, value):
-        if not isinstance(value, User):
-            raise TypeError("owner must be a User instance")
-
-        if not getattr(value, "id", None):
-            raise ValueError("owner must exist and have a valid id")
-        self._owner = value
+    @owner_id.setter
+    def owner_id(self, value):
+        if not isinstance(value, str):
+            raise TypeError("owner_id must be a User id")
+        self._owner_id = value
