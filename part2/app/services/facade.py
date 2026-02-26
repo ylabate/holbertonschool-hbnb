@@ -1,4 +1,5 @@
 from app.models.amenity import Amenity
+from app.models.review import Review
 from app.models.user import User
 from app.models.place import Place
 from app.persistence.repository import InMemoryRepository
@@ -73,3 +74,64 @@ class HBnBFacade:
     def update_place(self, place_id, place_data):
         self.place_repo.update(place_id, place_data)
         return self.place_repo.get(place_id)
+
+# ----- Review -------------------------------
+
+    def create_review(self, review_data):
+        user_id = review_data.get("user_id")
+        place_id = review_data.get("place_id")
+        text = review_data.get("text")
+        rating = review_data.get("rating")
+
+        if not isinstance(text, str) or not text.strip():
+            raise ValueError("text is required")
+
+        if rating is None:
+            raise ValueError("rating is required")
+
+        user = self.user_repo.get(user_id)
+        if not user:
+            raise ValueError("User not found")
+
+        place = self.place_repo.get(place_id)
+        if not place:
+            raise ValueError("Place not found")
+
+        review = Review(
+            text=text,
+            rating=rating,
+            user=user,
+            place=place,
+        )
+        self.review_repo.add(review)
+        return review
+
+    def get_review(self, review_id):
+        return self.review_repo.get(review_id)
+
+    def get_all_reviews(self):
+        return self.review_repo.get_all()
+
+    def get_reviews_by_place(self, place_id):
+        return [
+            review
+            for review in self.review_repo.get_all()
+            if review.place.id == place_id
+        ]
+
+    def update_review(self, review_id, review_data):
+        review = self.review_repo.get(review_id)
+        if not review:
+            return None
+
+        blocked_fields = {"id", "user", "user_id", "place", "place_id"}
+        safe_data = {
+            key: value
+            for key, value in review_data.items()
+            if key not in blocked_fields
+        }
+        self.review_repo.update(review_id, safe_data)
+        return self.review_repo.get(review_id)
+
+    def delete_review(self, review_id):
+        self.review_repo.delete(review_id)
