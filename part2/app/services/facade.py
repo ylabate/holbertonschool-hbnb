@@ -1,7 +1,7 @@
 from app.models.amenity import Amenity
+from app.models.place import Place
 from app.models.review import Review
 from app.models.user import User
-from app.models.place import Place
 from app.persistence.repository import InMemoryRepository
 
 
@@ -11,6 +11,8 @@ class HBnBFacade:
         self.place_repo = InMemoryRepository()
         self.review_repo = InMemoryRepository()
         self.amenity_repo = InMemoryRepository()
+
+# ----- user ----------------------------------
 
     def create_user(self, user_data):
         user = User(**user_data)
@@ -49,11 +51,11 @@ class HBnBFacade:
         self.amenity_repo.update(amenity_id, amenity_data)
         return self.amenity_repo.get(amenity_id)
 
-# ------ place ----------------------------------
+# ----- place ---------------------------------
 
     def create_place(self, place_data):
-        amenities = place_data.pop('amenities')
-        owner = self.user_repo.get(place_data.get('owner_id'))
+        amenities = place_data.pop("amenities")
+        owner = self.user_repo.get(place_data.get("owner_id"))
         if owner is None:
             raise ValueError("owner id is not a valid id")
 
@@ -77,7 +79,7 @@ class HBnBFacade:
         self.place_repo.update(place_id, place_data)
         return self.place_repo.get(place_id)
 
-# ----- Review -------------------------------
+# ----- Review --------------------------------
 
     def create_review(self, review_data):
         user_id = review_data.get("user_id")

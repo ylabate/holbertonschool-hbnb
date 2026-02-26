@@ -36,9 +36,6 @@ class Amenity(Entity):
             raise TypeError("description must be a string")
         value = value.strip()
 
-        if not value:
-            raise ValueError("description is required")
-
         if len(value) > 500:
             raise ValueError("description must be at most 500 characters")
         self._description = value
