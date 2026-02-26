@@ -51,15 +51,15 @@ False
 
 # Place
 >>> owner = User("Alice", "Smith", "alice@example.com", "password", True)
->>> place = Place("Cozy Apartment", "Near city center", "100", 40.7128, -74.0060, owner)
+>>> place = Place("Cozy Apartment", "Near city center", "100", 40.7128, -74.0060, owner.id)
 >>> place.title
 'Cozy Apartment'
 >>> place.price
-'100'
+100.0
 >>> place.latitude
 40.7128
->>> place.owner.first_name
-'Alice'
+>>> place.owner_id == owner.id
+True
 >>> place.add_amenity(amenity)
 >>> len(place.amenities)
 1
