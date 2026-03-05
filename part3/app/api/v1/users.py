@@ -1,5 +1,4 @@
 from flask_restx import Namespace, Resource, fields
-
 from app.services import facade
 
 api = Namespace("users", description="User operations")
@@ -16,6 +15,8 @@ user_model = api.model(
         "email": fields.String(
             required=True, description="Email of the user"
         ),
+        "password": fields.String(
+            descrption="Password of the user")
     },
     strict=True,
 )
@@ -23,6 +24,10 @@ user_model = api.model(
 user_model_response = api.inherit(
     "UserResponse", user_model, {"id": fields.String(description="User ID")}
 )
+
+# user_model_register = api.inherit(
+#     "UserRegister", user_model, {}
+# )
 
 
 @api.route("/")

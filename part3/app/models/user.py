@@ -1,4 +1,5 @@
 from app.models.entity import Entity
+from app import bcrypt
 import re
 
 
@@ -9,7 +10,7 @@ class User(Entity):
     # value = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"
 
     def __init__(self, first_name: str, last_name: str, email: str,
-                 password: str = 'a', is_admin: bool = False):
+                 password: str, is_admin: bool = False):
         super().__init__()
         self.first_name = first_name
         self.last_name = last_name
@@ -80,3 +81,19 @@ class User(Entity):
         if not isinstance(value, bool):
             raise TypeError("is_admin must be a boolean")
         self._is_admin = value
+
+    @property
+    def password(self):
+        return
+
+    @password.setter
+    def password(self, password: str):
+        self.hash_password(password)
+
+    def hash_password(self, password):
+        """Hashes the password before storing it."""
+        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    def verify_password(self, password):
+        """Verifies if the provided password matches the hashed password."""
+        return bcrypt.check_password_hash(self.password, password)
