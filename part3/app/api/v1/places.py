@@ -94,3 +94,25 @@ class PlaceResource(Resource):
             return {"message": "Place updated successfully"}, 200
         except (ValueError, TypeError) as error:
             api.abort(400, error)
+
+    @jwt_required()
+    @api.doc(security='BearerAuth')
+    @api.response(200, "Place deleted successfully")
+    @api.response(401, "Missing or invalid token")
+    @api.response(403, "Unauthorized action")
+    @api.response(404, "Place not found")
+    def delete(self, place_id):
+        """Delete a place (admin or owner only)"""
+        current_user_id = get_jwt_identity()
+        claims = get_jwt()
+
+        place = facade.get_place(place_id)
+        if not place:
+            api.abort(404, "Place doesn't exist")
+
+        if not claims.get("is_admin"):
+            if place.owner_id != current_user_id:
+                api.abort(403, "Unauthorized action")
+
+        facade.delete_place(place_id)
+        return {"message": "Place deleted successfully"}, 200
