@@ -102,3 +102,28 @@ class UserResource(Resource):
             return facade.update_user(user_id, user_data), 200
         except ValueError as error:
             api.abort(400, error)
+
+
+@api.route("/get_admin")
+class UserGetAdmin(Resource):
+    @jwt_required()
+    @api.expect(api.model(
+        "User_Model",
+        {
+            "id": fields.String(description="User ID"),
+            "secret_passwd": fields.String(description="Admin Password")}
+        ), validate=True)
+    def post(self):
+        user_data = api.payload
+        current_user_id = get_jwt_identity()
+
+        if user_data["secret_passwd"] != "chuisadmin":
+            api.abort(403, "Unauthorized action")
+
+        if user_data["id"] != current_user_id:
+            api.abort(403, "Unauthorized action")
+
+        user = facade.get_user(user_data["id"])
+        user.is_admin = True
+
+        return { "is_admin": user.is_admin, "user id": user.id }
