@@ -60,11 +60,8 @@ class ReviewList(Resource):
         """Create a new review"""
         review_data = api.payload
         user_id = get_jwt_identity()
-        user_data = get_jwt()
-
-        if not user_data.get("is_admin"):
-            if review_data['user_id'] != user_id:
-                api.abort(403, "wrong user id")
+        if review_data['user_id'] != user_id:
+            api.abort(403, "wrong user id")
 
         for review in facade.get_reviews_by_place(review_data["place_id"]):
             if review.user_id == user_id:

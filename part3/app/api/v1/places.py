@@ -1,4 +1,4 @@
-from flask_jwt_extended import get_jwt_identity, jwt_required
+from flask_jwt_extended import get_jwt_identity, jwt_required, get_jwt
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
 
@@ -79,13 +79,15 @@ class PlaceResource(Resource):
         """Update a place's information"""
         place_data = api.payload
         current_user_id = get_jwt_identity()
+        user_data = get_jwt()
 
         place = facade.get_place(place_id)
         if not place:
             api.abort(404, "Place doesn't exist")
 
-        if place.owner_id != current_user_id:
-            api.abort(403, "Unauthorized action")
+        if not user_data.get("is_admin"):
+            if place.owner_id != current_user_id:
+                api.abort(403, "Unauthorized action")
 
         try:
             facade.update_place(place_id, place_data)
