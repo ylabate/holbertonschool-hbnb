@@ -1,16 +1,16 @@
-# HBnB - Part 2 : Business Logic & API
+# HBnB - Part 3 : SQLAlchemy Persistence
 
 REST API for the HBnB application built with Flask and Flask-RESTx.
-Implements the business logic layer and exposes CRUD endpoints for users, amenities, places and reviews.
+This part persists entities with SQLAlchemy instead of keeping everything in memory.
 
 ## Architecture
 
 ```
-part2/
+part3/
 ├── app/
 │   ├── api/v1/          # Endpoints (users, amenities, places, reviews)
-│   ├── models/          # Business logic (User, Place, Amenity, Review)
-│   ├── persistence/     # InMemoryRepository
+│   ├── models/          # SQLAlchemy models + validation
+│   ├── persistence/     # SQLAlchemy repositories regrouped in one module
 │   └── services/        # Facade pattern
 ├── run.py
 └── requirement.txt
@@ -29,7 +29,7 @@ python run.py
 ```
 
 API available at: `http://localhost:5000/api/v1/`
-Swagger UI available at: `http://localhost:5000/api/v1/`
+Swagger UI available at: `http://localhost:5000/`
 
 ## Endpoints
 
@@ -47,7 +47,7 @@ Swagger UI available at: `http://localhost:5000/api/v1/`
 
 ## Tests
 
-All tests use Python's `doctest` module and must be run from the `part2/` directory.
+All tests use Python's `doctest` module and must be run from the `part3/` directory.
 
 ```bash
 # Models
@@ -61,4 +61,18 @@ python3 -m doctest app/api/v1/tests.txt
 ```
 
 
-> **Note:** The application uses an `InMemoryRepository` — all data is lost on server restart.
+> **Note:** User, Place, Review and Amenity are now stored in the SQLite database configured in [config.py](config.py).
+pour créer la db local
+```python
+flask shell
+>>> from app import db
+>>> db.create_all()
+```
+et pour créer un utilisateur admin
+```python
+flask shell
+>>> from app.services.facade import HBnBFacade
+>>> facade = HBnBFacade()
+>>> user = facade.create_user({'first_name':'John','last_name':'Doe','email':'john@example.com','password':'password'})
+>>> print(user.id)
+```

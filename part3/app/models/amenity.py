@@ -1,41 +1,27 @@
-from app.models.entity import Entity
+from sqlalchemy.orm import validates
+from app.models.place import place_amenity
+from app import db
+from app.models.baseclass import BaseModel
 
 
-class Amenity(Entity):
-    def __init__(self, name: str, description: str):
-        super().__init__()
-        self.name = name
-        self.description = description
+class Amenity(BaseModel):
+    __tablename__ = "amenities"
 
-    @property
-    def name(self):
-        return self._name
+    name = db.Column(db.String(50), nullable=False)
+    description = db.Column(db.String(500), nullable=True, default="")
+    places = db.relationship(
+        "Place",
+        secondary=place_amenity,
+        back_populates="amenities",
+        lazy="dynamic"
+    )
 
-    @name.setter
-    def name(self, value: str):
+    @validates("name")
+    def validate_name(self, _, value):
+        return value.strip()
 
-        if not isinstance(value, str):
-            raise TypeError("name must be a string")
-        value = value.strip()
-
-        if not value:
-            raise ValueError("name is required")
-
-        if len(value) > 50:
-            raise ValueError("name must be at most 50 characters")
-        self._name = value
-
-    @property
-    def description(self):
-        return self._description
-
-    @description.setter
-    def description(self, value: str):
-
-        if not isinstance(value, str):
-            raise TypeError("description must be a string")
-        value = value.strip()
-
-        if len(value) > 500:
-            raise ValueError("description must be at most 500 characters")
-        self._description = value
+    @validates("description")
+    def validate_description(self, _, value):
+        if value is None:
+            return ""
+        return value.strip()
