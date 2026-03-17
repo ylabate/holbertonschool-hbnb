@@ -25,7 +25,7 @@ place_model = api.model(
 place_model_response = api.inherit(
     "PlaceResponse", place_model, {
         "id": fields.String(description="Place ID"),
-        "owner_id": fields.String(description="ID of the owner"),
+        "user_id": fields.String(description="ID of the owner"),
     }
 )
 
@@ -42,7 +42,7 @@ class PlaceList(Resource):
     def post(self):
         """Register a new place"""
         place_data = api.payload
-        place_data['owner_id'] = get_jwt_identity()
+        place_data['user_id'] = get_jwt_identity()
         try:
             return facade.create_place(place_data), 201
         except (ValueError, TypeError) as error:
@@ -86,7 +86,7 @@ class PlaceResource(Resource):
             api.abort(404, "Place doesn't exist")
 
         if not user_data.get("is_admin"):
-            if place.owner_id != current_user_id:
+            if place.user_id != current_user_id:
                 api.abort(403, "Unauthorized action")
 
         try:
@@ -111,7 +111,7 @@ class PlaceResource(Resource):
             api.abort(404, "Place doesn't exist")
 
         if not claims.get("is_admin"):
-            if place.owner_id != current_user_id:
+            if place.user_id != current_user_id:
                 api.abort(403, "Unauthorized action")
 
         facade.delete_place(place_id)

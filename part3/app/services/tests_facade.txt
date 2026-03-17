@@ -24,14 +24,14 @@
 2
 
 # Places
->>> place1 = facade.create_place({"title": "Cozy Apartment", "description": "Nice place", "price": 100.0, "latitude": 40.7128, "longitude": -74.0060, "owner_id": user1.id, "amenities": [amenity1.id]})
+>>> place1 = facade.create_place({"title": "Cozy Apartment", "description": "Nice place", "price": 100.0, "latitude": 40.7128, "longitude": -74.0060, "user_id": user1.id, "amenities": [amenity1.id]})
 >>> facade.get_place(place1.id).title
 'Cozy Apartment'
 >>> len(place1.amenities)
 1
 
 >>> try:
-...     facade.create_place({"title": "Bad Place", "description": "Test", "price": 100.0, "latitude": 40.0, "longitude": -74.0, "owner_id": "00000000-0000-0000-0000-000000000000", "amenities": []})
+...     facade.create_place({"title": "Bad Place", "description": "Test", "price": 100.0, "latitude": 40.0, "longitude": -74.0, "user_id": "00000000-0000-0000-0000-000000000000", "amenities": []})
 ... except ValueError as e:
 ...     print(e)
 owner id is not a valid id

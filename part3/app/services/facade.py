@@ -64,7 +64,7 @@ class HBnBFacade:
 
     def create_place(self, place_data):
         amenities = place_data.pop("amenities", [])
-        owner = self.user_repo.get(place_data.get("owner_id"))
+        owner = self.user_repo.get(place_data.get("user_id"))
         if owner is None:
             raise ValueError("owner id is not a valid id")
 
@@ -118,7 +118,7 @@ class HBnBFacade:
         if not place:
             raise ValueError("Place not found")
 
-        if place.owner_id == user.id:
+        if place.user_id == user.id:
             raise ValueError("You cannot review your own place")
 
         review = Review(
