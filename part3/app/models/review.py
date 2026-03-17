@@ -9,24 +9,14 @@ class Review(BaseModel):
 
     text = db.Column(db.String(500), nullable=False)
     rating = db.Column(db.Integer, nullable=False)
-    user_id = db.Column(db.String(36), nullable=False)
-    place_id = db.Column(db.String(36), nullable=False)
-
-    @property
-    def user(self):
-        return self.__dict__.get("_user")
-
-    @user.setter
-    def user(self, value):
-        self.__dict__["_user"] = value
-
-    @property
-    def place(self):
-        return self.__dict__.get("_place")
-
-    @place.setter
-    def place(self, value):
-        self.__dict__["_place"] = value
+    user_id = db.Column(db.String(36),
+                        db.ForeignKey("users.id"),
+                        nullable=False)
+    place_id = db.Column(db.String(36),
+                         db.ForeignKey("places.id"),
+                         nullable=False)
+    place = db.relationship("Place", back_populates="reviews")
+    user = db.relationship("User", back_populates="reviews")
 
     @validates("text")
     def validate_text(self, _, value):

@@ -4,6 +4,17 @@ from app import db
 from app.models.baseclass import BaseModel
 
 
+place_amenity = db.Table(
+    "place_amenity",
+    db.Column("place_id", db.String(36),
+              db.ForeignKey("places.id"),
+              primary_key=True),
+    db.Column("amenity_id", db.String(36),
+              db.ForeignKey("amenities.id"),
+              primary_key=True)
+)
+
+
 class Place(BaseModel):
     __tablename__ = "places"
 
@@ -12,33 +23,23 @@ class Place(BaseModel):
     price = db.Column(db.Float, nullable=False)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
-    owner_id = db.Column(db.String(36), nullable=False)
+    owner_id = db.Column(db.String(36),
+                         db.ForeignKey("users.id"),
+                         nullable=False)
+    amenities = db.relationship(
+        "Amenity",
+        secondary=place_amenity,  # passe par la table intermédiaire
+        back_populates="places",
+        lazy="dynamic"
+    )
+    owner = db.relationship("User", back_populates="places")
+    reviews = db.relationship("Review", back_populates="place", lazy="dynamic")
 
     def add_review(self, review):
         self.reviews.append(review)
 
     def add_amenity(self, amenity: str):
         self.amenities.append(amenity)
-
-    @property
-    def reviews(self):
-        if "_reviews" not in self.__dict__:
-            self.__dict__["_reviews"] = []
-        return self.__dict__["_reviews"]
-
-    @reviews.setter
-    def reviews(self, value):
-        self.__dict__["_reviews"] = list(value or [])
-
-    @property
-    def amenities(self):
-        if "_amenities" not in self.__dict__:
-            self.__dict__["_amenities"] = []
-        return self.__dict__["_amenities"]
-
-    @amenities.setter
-    def amenities(self, value):
-        self.__dict__["_amenities"] = list(value or [])
 
     @validates("title")
     def validate_title(self, _, value):
