@@ -30,27 +30,10 @@ class Review(BaseModel):
 
     @validates("text")
     def validate_text(self, _, value):
-        if not isinstance(value, str):
-            raise TypeError("text must be a string")
-        value = value.strip()
-
-        if not value:
-            raise ValueError("text is required")
-        return value
-
-    @property
-    def comment(self):
-        return self.text
-
-    @comment.setter
-    def comment(self, value: str):
-        self.text = value
+        return value.strip()
 
     @validates("rating")
     def validate_rating(self, _, value):
-        if not isinstance(value, int):
-            raise TypeError("rating must be an integer")
-
         if value < 1 or value > 5:
             raise ValueError("rating must be between 1 and 5")
         return value

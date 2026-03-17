@@ -42,37 +42,16 @@ class Place(BaseModel):
 
     @validates("title")
     def validate_title(self, _, value):
-        if not isinstance(value, str):
-            raise TypeError("title must be a string")
-
-        value = value.strip()
-        if not value:
-            raise ValueError("title is required")
-
-        if len(value) > 100:
-            raise ValueError("title must be at most 100 characters")
-        return value
-
-    @validates("description")
-    def validate_description(self, _, value):
-        if value is None:
-            return None
-
-        if not isinstance(value, str):
-            raise TypeError("description must be a string or None")
-        return value
+        return value.strip()
 
     @validates("price")
     def validate_price(self, _, value):
         if isinstance(value, str):
             value = value.strip()
-            if not value:
-                raise ValueError("price is required")
             try:
                 value = float(value)
             except ValueError:
                 raise TypeError("price must be a positive float")
-
         elif isinstance(value, (int, float)):
             value = float(value)
         else:
@@ -102,10 +81,4 @@ class Place(BaseModel):
 
         if value < -180.0 or value > 180.0:
             raise ValueError("longitude must be between -180.0 and 180.0")
-        return value
-
-    @validates("owner_id")
-    def validate_owner_id(self, _, value):
-        if not isinstance(value, str):
-            raise TypeError("owner_id must be a User id")
         return value
