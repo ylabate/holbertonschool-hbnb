@@ -8,18 +8,31 @@ This part persists entities with SQLAlchemy instead of keeping everything in mem
 ```
 part3/
 ├── app/
-│   ├── api/v1/          # Endpoints (users, amenities, places, reviews)
+│   ├── api/v1/          # Endpoints (users, amenities, places, reviews, auth)
 │   ├── models/          # SQLAlchemy models + validation
-│   ├── persistence/     # SQLAlchemy repositories regrouped in one module
+│   ├── persistence/     # SQLAlchemy repositories
 │   └── services/        # Facade pattern
-├── run.py
-└── requirement.txt
+├── instance/            # SQLite database files
+├── config.py            # Configuration settings
+├── run.py               # Entry point
+├── schema.sql           # SQL script to create tables
+├── seed.sql             # SQL script to populate database
+└── requirement.txt      # Dependencies
 ```
 
 ## Installation
 
 ```bash
+git clone https://github.com/ylabate/holbertonschool-hbnb.git
+cd holbertonschool-hbnb/part3
 pip install -r requirement.txt
+```
+
+## Initialise the database with admin
+```bash
+mkdir instance
+cat schema.sql | sqlite3 instance/development.db
+cat seed.sql | sqlite3 instance/development.db
 ```
 
 ## Run the server
@@ -35,12 +48,14 @@ Swagger UI available at: `http://localhost:5000/`
 
 | Method | Endpoint | Description |
 |---|---|---|
-| GET/POST | `/api/v1/users/` | List all users / Create a user |
+| POST | `/api/v1/auth/` | Authenticate user and return a JWT token |
+| GET | `/api/v1/auth/protected` | A protected endpoint that requires a valid JWT token |
+| GET/POST | `/api/v1/users/` | List all users / Create a user (Admin only) |
 | GET/PUT | `/api/v1/users/<id>` | Get / Update a user |
-| GET/POST | `/api/v1/amenities/` | List all amenities / Create an amenity |
-| GET/PUT | `/api/v1/amenities/<id>` | Get / Update an amenity |
+| GET/POST | `/api/v1/amenities/` | List all amenities / Create an amenity (Admin only) |
+| GET/PUT | `/api/v1/amenities/<id>` | Get / Update an amenity (Admin only) |
 | GET/POST | `/api/v1/places/` | List all places / Create a place |
-| GET/PUT | `/api/v1/places/<id>` | Get / Update a place |
+| GET/PUT/DELETE | `/api/v1/places/<id>` | Get / Update / Delete a place |
 | GET/POST | `/api/v1/reviews/` | List all reviews / Create a review |
 | GET/PUT/DELETE | `/api/v1/reviews/<id>` | Get / Update / Delete a review |
 | GET | `/api/v1/reviews/by_place/<id>` | Get all reviews for a place |
@@ -83,7 +98,7 @@ erDiagram
 		float price  ""  
 		float latitude  ""  
 		float longitude  ""  
-		string owner_id  "FK"  
+		string user_id  "FK"  
 	}
 
 	Review {
