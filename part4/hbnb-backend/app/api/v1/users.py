@@ -18,7 +18,9 @@ user_model = api.model(
 )
 
 user_model_response = api.inherit(
-    "UserResponse", user_model, {"id": fields.String(description="User ID")}
+    "UserResponse", user_model, {
+        "id": fields.String(description="User ID")
+    },
 )
 
 user_model_register = api.model(

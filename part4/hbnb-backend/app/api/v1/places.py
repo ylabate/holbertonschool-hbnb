@@ -22,12 +22,6 @@ place_model = api.model(
         ),
     },
 )
-place_model_response = api.inherit(
-    "PlaceResponse", place_model, {
-        "id": fields.String(description="Place ID"),
-        "user_id": fields.String(description="ID of the owner"),
-    }
-)
 
 
 @api.route('/')
@@ -38,7 +32,6 @@ class PlaceList(Resource):
     @api.response(201, 'Place successfully created')
     @api.response(400, 'Invalid input data')
     @api.response(401, 'Missing or invalid token')
-    @api.marshal_with(place_model_response)
     def post(self):
         """Register a new place"""
         place_data = api.payload
@@ -49,7 +42,6 @@ class PlaceList(Resource):
             api.abort(400, error)
 
     @api.response(200, 'List of places retrieved successfully')
-    @api.marshal_with(place_model_response, as_list=True)
     def get(self):
         """Retrieve a list of all places"""
         return facade.get_all_places()
@@ -59,7 +51,6 @@ class PlaceList(Resource):
 class PlaceResource(Resource):
     @api.response(200, 'Place details retrieved successfully')
     @api.response(404, 'Place not found')
-    @api.marshal_with(place_model_response)
     def get(self, place_id):
         """Get place details by ID"""
         place_data = facade.get_place(place_id)
@@ -86,7 +77,7 @@ class PlaceResource(Resource):
             api.abort(404, "Place doesn't exist")
 
         if not user_data.get("is_admin"):
-            if place.user_id != current_user_id:
+            if place["owner_id"] != current_user_id:
                 api.abort(403, "Unauthorized action")
 
         try:
@@ -111,7 +102,7 @@ class PlaceResource(Resource):
             api.abort(404, "Place doesn't exist")
 
         if not claims.get("is_admin"):
-            if place.user_id != current_user_id:
+            if place["owner_id"] != current_user_id:
                 api.abort(403, "Unauthorized action")
 
         facade.delete_place(place_id)

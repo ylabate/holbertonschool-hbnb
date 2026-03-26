@@ -38,7 +38,7 @@ class Place(BaseModel):
     def add_review(self, review):
         self.reviews.append(review)
 
-    def add_amenity(self, amenity: str):
+    def add_amenity(self, amenity):
         self.amenities.append(amenity)
 
     @validates("title")

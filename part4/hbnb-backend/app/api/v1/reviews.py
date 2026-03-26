@@ -39,6 +39,8 @@ review_model_response = api.model(
         "rating": fields.Integer(description="Rating value"),
         "user_id": fields.String(description="User ID"),
         "place_id": fields.String(description="Place ID"),
+        "user_first_name": fields.String(description="User first name"),
+        "user_last_name": fields.String(description="User last name")
     },
 )
 

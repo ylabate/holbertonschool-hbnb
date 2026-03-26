@@ -71,18 +71,82 @@ class HBnBFacade:
         place = Place(**place_data)
 
         for amenity in amenities:
-            if not self.amenity_repo.get(amenity):
+            amenity_obj = self.amenity_repo.get(amenity)
+            if not amenity_obj:
                 raise ValueError("amenities id is not a valid id")
-            place.add_amenity(amenity)
+            place.add_amenity(amenity_obj)
 
         self.place_repo.add(place)
-        return place
+
+        place_data = {
+            "id": place.id,
+            "title": place.title,
+            "description": place.description,
+            "price": place.price,
+            "latitude": place.latitude,
+            "longitude": place.longitude,
+            "owner_id": place.user_id,
+            "owner_first_name": place.owner.first_name,
+            "owner_last_name": place.owner.last_name,
+            "amenities": [
+                {
+                    "id": amenity.id,
+                    "name": amenity.name,
+                    "description": amenity.description,
+                }
+                for amenity in place.amenities
+            ],
+        }
+        return place_data
 
     def get_place(self, place_id):
-        return self.place_repo.get(place_id)
+        place = self.place_repo.get(place_id)
+        if not place:
+            return None
+        place_data = {
+            "id": place.id,
+            "title": place.title,
+            "description": place.description,
+            "price": place.price,
+            "latitude": place.latitude,
+            "longitude": place.longitude,
+            "owner_id": place.user_id,
+            "owner_first_name": place.owner.first_name,
+            "owner_last_name": place.owner.last_name,
+            "amenities": [
+                {
+                    "id": amenity.id,
+                    "name": amenity.name,
+                    "description": amenity.description,
+                }
+                for amenity in place.amenities
+            ],
+        }
+
+        return place_data
 
     def get_all_places(self):
-        return self.place_repo.get_all()
+        allplaces = self.place_repo.get_all()
+        allplaces_data = [{
+            "id": place.id,
+            "title": place.title,
+            "description": place.description,
+            "price": place.price,
+            "latitude": place.latitude,
+            "longitude": place.longitude,
+            "owner_id": place.user_id,
+            "owner_first_name": place.owner.first_name,
+            "owner_last_name": place.owner.last_name,
+            "amenities": [
+                {
+                    "id": amenity.id,
+                    "name": amenity.name,
+                    "description": amenity.description,
+                }
+                for amenity in place.amenities
+            ],
+        } for place in allplaces]
+        return allplaces_data
 
     def update_place(self, place_id, place_data):
         safe_data = {
@@ -133,13 +197,24 @@ class HBnBFacade:
         return review
 
     def get_review(self, review_id):
-        return self.review_repo.get(review_id)
+        review = self.review_repo.get(review_id)
+        review.user_first_name = review.user.first_name
+        review.user_last_name = review.user.last_name
+        return review
 
     def get_all_reviews(self):
-        return self.review_repo.get_all()
+        reviews = self.review_repo.get_all()
+        for review in reviews:
+            review.user_first_name = review.user.first_name
+            review.user_last_name = review.user.last_name
+        return reviews
 
     def get_reviews_by_place(self, place_id):
-        return self.review_repo.get_by_place_id(place_id)
+        reviews = self.review_repo.get_by_place_id(place_id)
+        for review in reviews:
+            review.user_first_name = review.user.first_name
+            review.user_last_name = review.user.last_name
+        return reviews
 
     def update_review(self, review_id, review_data):
         review = self.review_repo.get(review_id)
