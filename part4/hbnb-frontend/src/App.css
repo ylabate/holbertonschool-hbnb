@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+h2 {
+	@apply text-2xl font-bold
+}
+
+body {
+	background-color: white;
+}
