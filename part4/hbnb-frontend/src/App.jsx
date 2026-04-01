@@ -1,39 +1,141 @@
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
-import "./App.css";
-import Header from "./components/Header.jsx";
-import HomePage from "./feature/HomePage.jsx";
-import PlaceDetails from "./components/Comments.jsx";
-import LoginScreen from "./components/LoginScreen.jsx";
+import "@/App.css";
+import Header from "@/components/Header";
+import HomePage from "@/feature/HomePage";
+import UserPage from "@/feature/UserPage";
+import LoginScreen from "@/feature/LoginScreen";
+import PlacePage from "@/feature/PlacePage";
+import { useEffect, useState } from "react";
+import { API_BASE_URL } from "@/constants";
+import { getCookie, setCookie, deleteCookie } from "@/utils/cookies";
 
-function AnimatedRoutes() {
-  const location = useLocation();
+const TOKEN_STORAGE_KEY = "hbnb_token";
+const BEARER_PREFIX = "Bearer ";
 
-  return (
-    <div className="flex-1 overflow-y-auto relative">
-      <AnimatePresence mode="wait">
-        <Routes location={location} key={location.pathname}>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginScreen />} />
-          <Route path="/comments/:PAGE_ID" element={<PlaceDetails />} />
-        </Routes>
-      </AnimatePresence>
-    </div>
-  );
+function normalizeToken(rawToken) {
+  if (!rawToken) return "";
+  return rawToken.startsWith(BEARER_PREFIX)
+    ? rawToken
+    : `${BEARER_PREFIX}${rawToken}`;
 }
 
 export default function App() {
+  const [isLoggedIn, setLoggedIn] = useState("");
+  const [isAuthReady, setIsAuthReady] = useState(false);
+  const [theme, setTheme] = useState(() => getCookie("theme") || "light");
+  const location = useLocation();
+
+  // Theme Management
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === "dark") {
+      root.classList.add("dark");
+      root.style.colorScheme = "dark";
+    } else {
+      root.classList.remove("dark");
+      root.style.colorScheme = "light";
+    }
+    setCookie("theme", theme);
+  }, [theme]);
+
+  useEffect(() => {
+    let ignore = false;
+
+    async function bootstrapAuth() {
+      const storedToken = getCookie(TOKEN_STORAGE_KEY);
+
+      if (!storedToken) {
+        if (!ignore) setIsAuthReady(true);
+        return;
+      }
+
+      const normalizedToken = normalizeToken(storedToken);
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/auth/protected`, {
+          headers: { Authorization: normalizedToken },
+        });
+
+        if (ignore) return;
+
+        if (response.ok) {
+          setLoggedIn(normalizedToken);
+        } else {
+          deleteCookie(TOKEN_STORAGE_KEY);
+          setLoggedIn("");
+        }
+      } catch {
+        if (ignore) return;
+        setLoggedIn(normalizedToken);
+      } finally {
+        if (!ignore) setIsAuthReady(true);
+      }
+    }
+
+    bootstrapAuth();
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isAuthReady) return;
+
+    if (isLoggedIn) {
+      setCookie(TOKEN_STORAGE_KEY, isLoggedIn);
+    } else {
+      deleteCookie(TOKEN_STORAGE_KEY);
+    }
+  }, [isLoggedIn, isAuthReady]);
+
+  if (!isAuthReady) {
+    return <main className="flex justify-center"></main>;
+  }
+
   return (
-    <>
-      <BrowserRouter>
-        <div className="flex justify-center">
-          {/* <div className="w-120"><iframe src="https://www.tiktok.com/" frameborder="0"></iframe></div> */}
-          <div className="flex flex-col h-screen w-full max-w-120">
-            <Header />
-            <AnimatedRoutes />
-          </div>
-        </div>
-      </BrowserRouter>
-    </>
+    <main className="flex justify-center">
+      <section className="flex flex-col h-screen w-full max-w-120">
+        <Header isLoggedIn={isLoggedIn} />
+        <section className="flex-1 overflow-y-auto relative bg-color">
+          <AnimatePresence mode="wait">
+            <Routes location={location} key={location.pathname}>
+              <Route path="/" element={<HomePage isLoggedIn={isLoggedIn} />} />
+              <Route path="/place" element={<Navigate to="/" replace />} />
+              <Route
+                path="/place/:id"
+                element={
+                  <PlacePage
+                    isLoggedIn={isLoggedIn}
+                    setLoggedIn={setLoggedIn}
+                  />
+                }
+              />
+              <Route
+                path="/login"
+                element={
+                  <LoginScreen
+                    isLoggedIn={isLoggedIn}
+                    setLoggedIn={setLoggedIn}
+                  />
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <UserPage
+                    isLoggedIn={isLoggedIn}
+                    setLoggedIn={setLoggedIn}
+                    theme={theme}
+                    setTheme={setTheme}
+                  />
+                }
+              />
+            </Routes>
+          </AnimatePresence>
+        </section>
+      </section>
+    </main>
   );
 }
