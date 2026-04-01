@@ -1,12 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { API_BASE_URL } from "@/constants";
 import ReviewCard from "@/components/ReviewCard";
 import { getCookie, setCookie } from "@/utils/cookies";
 
-export default function PlaceCommentsList({ placeId }) {
+export default function PlaceCommentsList({
+  placeId,
+  userId = null,
+  authToken = null,
+}) {
   const [comments, setComments] = useState([]);
 
-  useEffect(() => {
+  const fetchComments = useCallback(() => {
     if (!placeId) return;
 
     fetch(`${API_BASE_URL}/reviews/by_place/${placeId}`)
@@ -18,6 +22,10 @@ export default function PlaceCommentsList({ placeId }) {
         console.error("Error fetching comments:", error);
       });
   }, [placeId]);
+
+  useEffect(() => {
+    fetchComments();
+  }, [fetchComments]);
 
   const [likedComments, setLikedComments] = useState(() => {
     const saved = getCookie("likedComment");
@@ -53,6 +61,9 @@ export default function PlaceCommentsList({ placeId }) {
             review={comment}
             isLiked={likedComments[comment.id]}
             onToggleLike={toggleLike}
+            currentUserId={userId}
+            authToken={authToken}
+            onSuccess={fetchComments}
           />
         ))
       )}

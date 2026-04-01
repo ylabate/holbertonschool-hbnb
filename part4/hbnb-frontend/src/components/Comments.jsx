@@ -101,6 +101,9 @@ export default function PlaceComment({
               review={comment}
               isLiked={likedComments[comment.id]}
               onToggleLike={toggleLike}
+              currentUserId={userId}
+              authToken={authToken}
+              onSuccess={refreshComments}
             />
           ))
         )}
@@ -113,7 +116,7 @@ export default function PlaceComment({
             onSuccess={refreshComments}
           />
         ) : (
-          <p className="status-text text-center py-4">
+          <p className="status-text text-center py-4 text-fg">
             Log in to leave a comment.
           </p>
         )}

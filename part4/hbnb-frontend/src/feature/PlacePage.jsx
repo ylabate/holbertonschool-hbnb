@@ -107,19 +107,19 @@ export default function PlacePage({ isLoggedIn }) {
         <section className="place-details place-card place-copy p-6 flex flex-col gap-4">
           <div className="place-info">
             <p className="profile-label">Owner</p>
-            <h2 className="text-lg">
+            <h2 className="text-lg text-fg">
               {place.owner_first_name} {place.owner_last_name}
             </h2>
           </div>
 
           <div className="place-info">
             <p className="profile-label">Description</p>
-            <p className="status-text">{place.description}</p>
+            <p className="status-text text-fg">{place.description}</p>
           </div>
 
           <div className="place-info">
             <p className="profile-label">Price per night</p>
-            <p className="text-lg font-semibold">${place.price}</p>
+            <p className="text-lg font-semibold text-fg">${place.price}</p>
           </div>
 
           {place.amenities?.length > 0 && (
@@ -138,7 +138,7 @@ export default function PlacePage({ isLoggedIn }) {
           <hr className="border-separator my-2" />
 
           <div>
-            <h2 className="text-xl font-bold mb-4">Comments</h2>
+            <h2 className="text-xl font-bold mb-4 text-fg">Comments</h2>
 
             {isLoggedIn && userData ? (
               <div className="mb-8">
@@ -150,13 +150,18 @@ export default function PlacePage({ isLoggedIn }) {
                 />
               </div>
             ) : (
-              <p className="status-text text-center py-4">
+              <p className="status-text text-center py-4 text-fg">
                 Log in to leave a comment.
               </p>
             )}
 
             <div className="comments-container">
-              <PlaceCommentsList key={refreshTrigger} placeId={id} />
+              <PlaceCommentsList
+                key={refreshTrigger}
+                placeId={id}
+                userId={userData?.id}
+                authToken={isLoggedIn}
+              />
             </div>
           </div>
         </section>
