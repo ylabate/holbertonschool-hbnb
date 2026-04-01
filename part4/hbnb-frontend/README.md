@@ -9,7 +9,6 @@ This application consumes the `part4/hbnb-backend` API to display places, their 
 - **Vite** (Build tool & Dev server)
 - **React Router 7** (Routing)
 - **Tailwind CSS 4** (Styling)
-- **Framer Motion** (Animations)
 - **Lucide React** (Icons)
 
 ## 🛠️ Getting Started
@@ -60,6 +59,5 @@ npm run preview
 
 ## 📝 Ongoing Development (Todo)
 
-- [ ] Implement editing and deleting own reviews.
-- [ ] Allow users to view an owner's profile and their listed places.
+- [x] Implement editing and deleting own reviews.
 - [ ] Add functionality to create or edit places directly from the frontend.

@@ -1,5 +1,4 @@
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
 import "@/App.css";
 import Header from "@/components/Header";
 import HomePage from "@/feature/HomePage";
@@ -99,41 +98,36 @@ export default function App() {
       <section className="flex flex-col h-screen w-full max-w-120">
         <Header isLoggedIn={isLoggedIn} />
         <section className="flex-1 overflow-y-auto relative bg-color">
-          <AnimatePresence mode="wait">
-            <Routes location={location} key={location.pathname}>
-              <Route path="/" element={<HomePage isLoggedIn={isLoggedIn} />} />
-              <Route path="/place" element={<Navigate to="/" replace />} />
-              <Route
-                path="/place/:id"
-                element={
-                  <PlacePage
-                    isLoggedIn={isLoggedIn}
-                    setLoggedIn={setLoggedIn}
-                  />
-                }
-              />
-              <Route
-                path="/login"
-                element={
-                  <LoginScreen
-                    isLoggedIn={isLoggedIn}
-                    setLoggedIn={setLoggedIn}
-                  />
-                }
-              />
-              <Route
-                path="/profile"
-                element={
-                  <UserPage
-                    isLoggedIn={isLoggedIn}
-                    setLoggedIn={setLoggedIn}
-                    theme={theme}
-                    setTheme={setTheme}
-                  />
-                }
-              />
-            </Routes>
-          </AnimatePresence>
+          <Routes location={location} key={location.pathname}>
+            <Route path="/" element={<HomePage isLoggedIn={isLoggedIn} />} />
+            <Route path="/place" element={<Navigate to="/" replace />} />
+            <Route
+              path="/place/:id"
+              element={
+                <PlacePage isLoggedIn={isLoggedIn} setLoggedIn={setLoggedIn} />
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                <LoginScreen
+                  isLoggedIn={isLoggedIn}
+                  setLoggedIn={setLoggedIn}
+                />
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <UserPage
+                  isLoggedIn={isLoggedIn}
+                  setLoggedIn={setLoggedIn}
+                  theme={theme}
+                  setTheme={setTheme}
+                />
+              }
+            />
+          </Routes>
         </section>
       </section>
     </main>
