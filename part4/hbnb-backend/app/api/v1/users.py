@@ -18,8 +18,18 @@ user_model = api.model(
 )
 
 user_model_response = api.inherit(
-    "UserResponse", user_model, {
-        "id": fields.String(description="User ID")
+    "UserResponse",
+    user_model,
+    {
+        "id": fields.String(description="User ID"),
+    },
+)
+
+user_model_response_self = api.inherit(
+    "UserResponseSelf",
+    user_model_response,
+    {
+        "favoris": fields.List(fields.String, description="Favorite of the user"),
     },
 )
 
@@ -123,3 +133,41 @@ class UserResource(Resource):
             return facade.update_user(user_id, user_data), 200
         except ValueError as error:
             api.abort(400, error)
+
+
+@api.route("/<user_id>/<place_id>")
+@api.response(404, "User or place doesn't exist")
+class FavorisResource(Resource):
+    def post(self, user_id, place_id):
+        user_data = facade.get_user(user_id)
+        if not user_data:
+            api.abort(404, "User doesn't exist")
+        try:
+            facade.add_favoris(place_id, user_id)
+        except ValueError as error:
+            api.abort(400, str(error))
+        return {"status": "ok"}, 201
+
+    def delete(self, user_id, place_id):
+        user_data = facade.get_user(user_id)
+        if not user_data:
+            api.abort(404, "User doesn't exist")
+        try:
+            facade.remove_favoris(place_id, user_id)
+        except ValueError as error:
+            api.abort(400, str(error))
+        return {"status": "ok"}, 200
+
+
+@api.route("/self")
+class UserSelfResource(Resource):
+    @jwt_required()
+    @api.doc(security="BearerAuth")
+    @api.marshal_with(user_model_response_self)
+    def get(self):
+        """Get current user details"""
+        current_user_id = get_jwt_identity()
+        user_data = facade.get_user(current_user_id)
+        if user_data:
+            return user_data, 200
+        api.abort(404, "User doesn't exist")

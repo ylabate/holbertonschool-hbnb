@@ -49,8 +49,8 @@ class ProtectedResource(Resource):
         user_id = get_jwt_identity()
         user = facade.get_user(user_id)
         if not user:
-            return {"message": "invalide token"}
+            return {"message": "invalid token"}, 401
         return {
-            "id": {user.id},
-            "is_admin": {user.is_admin}
+            "id": user.id,
+            "is_admin": user.is_admin
         }, 200

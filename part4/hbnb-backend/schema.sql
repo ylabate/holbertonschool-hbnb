@@ -54,3 +54,11 @@ CREATE TABLE IF NOT EXISTS place_amenity (
 	FOREIGN KEY(place_id) REFERENCES places (id),
 	FOREIGN KEY(amenity_id) REFERENCES amenities (id)
 );
+
+CREATE TABLE IF NOT EXISTS favorite_places (
+	user_id VARCHAR(36) NOT NULL,
+	place_id VARCHAR(36) NOT NULL,
+	PRIMARY KEY (user_id, place_id),
+	FOREIGN KEY(user_id) REFERENCES users (id),
+	FOREIGN KEY(place_id) REFERENCES places (id)
+);

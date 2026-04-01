@@ -30,7 +30,18 @@ class HBnBFacade:
             raise
 
     def get_user(self, user_id):
-        return self.user_repo.get(user_id)
+        user = self.user_repo.get(user_id)
+        user_data = {
+            "id": user.id,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "email": user.email,
+            "favoris": [
+                favori.id
+                for favori in user.favoris
+            ]
+        }
+        return user_data
 
     def get_user_by_email(self, email):
         return self.user_repo.get_user_by_email(email)
@@ -41,6 +52,36 @@ class HBnBFacade:
     def update_user(self, id, data):
         self.user_repo.update(id, data)
         return self.user_repo.get(id)
+
+    def add_favoris(self, place_id, user_id):
+        user = self.user_repo.get(user_id)
+        if not user:
+            raise ValueError("User not found")
+
+        place = self.place_repo.get(place_id)
+        if not place:
+            raise ValueError("Place not found")
+
+        if place in user.favoris:
+            raise ValueError("Place already in favoris")
+
+        self.user_repo.add_favoris(user_id, place)
+        return user
+
+    def remove_favoris(self, place_id, user_id):
+        user = self.user_repo.get(user_id)
+        if not user:
+            raise ValueError("User not found")
+
+        place = self.place_repo.get(place_id)
+        if not place:
+            raise ValueError("Place not found")
+
+        if place not in user.favoris:
+            raise ValueError("Place not in favoris")
+
+        self.user_repo.remove_favoris(user_id, place)
+        return user
 
     # ----- amenity -------------------------------
 

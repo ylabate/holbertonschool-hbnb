@@ -70,6 +70,16 @@ class UserRepository(SQLAlchemyRepository):
     def get_user_by_email(self, email):
         return self.model.query.filter_by(email=email).first()
 
+    def add_favoris(self, id, place):
+        user = self.get(id)
+        user.favoris.append(place)
+        db.session.commit()
+
+    def remove_favoris(self, id, place):
+        user = self.get(id)
+        user.favoris.remove(place)
+        db.session.commit()
+
 
 class AmenityRepository(SQLAlchemyRepository):
     def __init__(self):

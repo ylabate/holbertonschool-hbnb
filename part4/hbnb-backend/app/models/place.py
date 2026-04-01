@@ -2,6 +2,7 @@ from sqlalchemy.orm import validates
 
 from app import db
 from app.models.baseclass import BaseModel
+from app.models.user import favorite_places
 
 
 place_amenity = db.Table(
@@ -34,6 +35,12 @@ class Place(BaseModel):
     )
     owner = db.relationship("User", back_populates="places")
     reviews = db.relationship("Review", back_populates="place", lazy="dynamic")
+    favorited_by = db.relationship(
+        "User",
+        secondary=favorite_places,
+        back_populates="favoris",
+        lazy="dynamic"
+    )
 
     def add_review(self, review):
         self.reviews.append(review)

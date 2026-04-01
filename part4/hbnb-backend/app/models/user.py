@@ -7,6 +7,12 @@ from app.models.baseclass import BaseModel
 
 email_format = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"
 
+favorite_places = db.Table(
+    "favorite_places",
+    db.Column("user_id", db.String(36), db.ForeignKey("users.id"), primary_key=True),
+    db.Column("place_id", db.String(36), db.ForeignKey("places.id"), primary_key=True),
+)
+
 
 class User(BaseModel):
     __tablename__ = "users"
@@ -17,8 +23,8 @@ class User(BaseModel):
     password = db.Column(db.String(128), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
     places = db.relationship("Place", back_populates="owner", lazy="dynamic")
-    reviews = db.relationship("Review", back_populates="user",
-                              lazy="dynamic")
+    reviews = db.relationship("Review", back_populates="user", lazy="dynamic")
+    favoris = db.relationship("Place", secondary=favorite_places, back_populates="favorited_by")
 
     @validates("email")
     def validate_email(self, _, value):
