@@ -95,7 +95,7 @@ export default function App() {
 
   return (
     <main className="flex justify-center">
-      <section className="flex flex-col h-screen w-full max-w-120">
+      <section className="flex flex-col h-screen w-full">
         <Header isLoggedIn={isLoggedIn} />
         <section className="flex-1 overflow-y-auto relative bg-color">
           <Routes location={location} key={location.pathname}>
