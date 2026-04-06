@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+
 from app import db
 from app.models.amenity import Amenity
 from app.models.place import Place
@@ -89,6 +90,9 @@ class AmenityRepository(SQLAlchemyRepository):
 class PlaceRepository(SQLAlchemyRepository):
     def __init__(self):
         super().__init__(Place)
+
+    def get_by_owner_id(self, owner_id):
+        return self.model.query.filter_by(user_id=owner_id).all()
 
 
 class ReviewRepository(SQLAlchemyRepository):

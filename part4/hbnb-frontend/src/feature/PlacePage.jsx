@@ -140,6 +140,38 @@ export default function PlacePage({ isLoggedIn }) {
 								</div>
 							</div>
 						)}
+
+						{place.latitude !== undefined &&
+							place.longitude !== undefined && (
+								<div className="place-info mt-2">
+									<p className="profile-label mb-2">
+										Location
+									</p>
+									<div className="w-full h-64 rounded-xl overflow-hidden border border-[var(--bg-separator)] bg-bg-button">
+										<iframe
+											width="100%"
+											height="100%"
+											frameBorder="0"
+											scrolling="no"
+											marginHeight="0"
+											marginWidth="0"
+											src={`https://www.openstreetmap.org/export/embed.html?bbox=${place.longitude - 0.01},${place.latitude - 0.01},${place.longitude + 0.01},${place.latitude + 0.01}&layer=mapnik&marker=${place.latitude},${place.longitude}`}
+											style={{ border: 0 }}
+											title="Place Location"
+										></iframe>
+									</div>
+									<p className="text-xs text-fg-muted mt-1 text-right">
+										<a
+											href={`https://www.openstreetmap.org/?mlat=${place.latitude}&mlon=${place.longitude}#map=15/${place.latitude}/${place.longitude}`}
+											target="_blank"
+											rel="noopener noreferrer"
+											className="hover:underline text-accent-pink"
+										>
+											View larger map
+										</a>
+									</p>
+								</div>
+							)}
 					</div>
 
 					<div className="flex flex-col border-t lg:border-t-0 lg:border-l border-[var(--bg-separator)] pt-6 lg:pt-0 lg:pl-8">

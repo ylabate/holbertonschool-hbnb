@@ -4,6 +4,7 @@ import { Heart, MessageSquare, MoveDown, MoveUp, Share } from "lucide-react";
 import { API_BASE_URL } from "@/constants";
 import colorFromId from "@/components/RandomColor";
 import PlaceComment from "@/components/Comments";
+import LocationName from "@/components/LocationName";
 
 const VIEWPORT_BUFFER = 3;
 const LOOP_SHUFFLE_THRESHOLD = 4;
@@ -423,6 +424,10 @@ export default function HomePage({ isLoggedIn }) {
 												{place.owner_first_name}{" "}
 												{place.owner_last_name}
 											</h2>
+											<LocationName
+												latitude={place.latitude}
+												longitude={place.longitude}
+											/>
 										</section>
 										<h3>{place.description}</h3>
 										<h2 className="wrap-break-word text-center text-base">

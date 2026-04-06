@@ -39,10 +39,7 @@ class HBnBFacade:
             "last_name": user.last_name,
             "email": user.email,
             "is_admin": user.is_admin,
-            "favoris": [
-                favori.id
-                for favori in user.favoris
-            ]
+            "favoris": [favori.id for favori in user.favoris],
         }
         return user_data
 
@@ -171,32 +168,59 @@ class HBnBFacade:
 
     def get_all_places(self):
         allplaces = self.place_repo.get_all()
-        allplaces_data = [{
-            "id": place.id,
-            "title": place.title,
-            "description": place.description,
-            "price": place.price,
-            "latitude": place.latitude,
-            "longitude": place.longitude,
-            "owner_id": place.user_id,
-            "owner_first_name": place.owner.first_name,
-            "owner_last_name": place.owner.last_name,
-            "amenities": [
-                {
-                    "id": amenity.id,
-                    "name": amenity.name,
-                    "description": amenity.description,
-                }
-                for amenity in place.amenities
-            ],
-        } for place in allplaces]
+        allplaces_data = [
+            {
+                "id": place.id,
+                "title": place.title,
+                "description": place.description,
+                "price": place.price,
+                "latitude": place.latitude,
+                "longitude": place.longitude,
+                "owner_id": place.user_id,
+                "owner_first_name": place.owner.first_name,
+                "owner_last_name": place.owner.last_name,
+                "amenities": [
+                    {
+                        "id": amenity.id,
+                        "name": amenity.name,
+                        "description": amenity.description,
+                    }
+                    for amenity in place.amenities
+                ],
+            }
+            for place in allplaces
+        ]
+        return allplaces_data
+
+    def get_places_by_owner(self, owner_id):
+        allplaces = self.place_repo.get_by_owner_id(owner_id)
+        allplaces_data = [
+            {
+                "id": place.id,
+                "title": place.title,
+                "description": place.description,
+                "price": place.price,
+                "latitude": place.latitude,
+                "longitude": place.longitude,
+                "owner_id": place.user_id,
+                "owner_first_name": place.owner.first_name,
+                "owner_last_name": place.owner.last_name,
+                "amenities": [
+                    {
+                        "id": amenity.id,
+                        "name": amenity.name,
+                        "description": amenity.description,
+                    }
+                    for amenity in place.amenities
+                ],
+            }
+            for place in allplaces
+        ]
         return allplaces_data
 
     def update_place(self, place_id, place_data):
         safe_data = {
-            key: value
-            for key, value in place_data.items()
-            if key != "amenities"
+            key: value for key, value in place_data.items() if key != "amenities"
         }
         self.place_repo.update(place_id, safe_data)
         return self.place_repo.get(place_id)

@@ -8,6 +8,7 @@ export default function UserPage({ isLoggedIn, setLoggedIn, theme, setTheme }) {
 	const [userData, setUserData] = useState(null);
 	const [errorMessage, setErrorMessage] = useState("");
 	const [placeDetails, setPlaceDetails] = useState({});
+	const [myPlaces, setMyPlaces] = useState([]);
 	const navigate = useNavigate();
 	const [showSettings, setShowSettings] = useState(false);
 
@@ -32,6 +33,18 @@ export default function UserPage({ isLoggedIn, setLoggedIn, theme, setTheme }) {
 				setLoggedIn("");
 			});
 	}, [isLoggedIn, setLoggedIn]);
+
+	useEffect(() => {
+		if (!userData?.id) return;
+		fetch(`${API_BASE_URL}/places/by_owner/${userData.id}`)
+			.then((res) => res.json())
+			.then((data) => {
+				if (Array.isArray(data)) {
+					setMyPlaces(data);
+				}
+			})
+			.catch((err) => console.error(err));
+	}, [userData?.id]);
 
 	useEffect(() => {
 		const favorisList = Array.isArray(userData?.favoris)
@@ -105,14 +118,47 @@ export default function UserPage({ isLoggedIn, setLoggedIn, theme, setTheme }) {
 				</section>
 
 				<div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-					<section className="profile-card px-6 py-6">
-						<p className="profile-label">Profile</p>
-						<h1>
-							{userData.first_name} {userData.last_name}
-						</h1>
-						<p className="status-text mt-2">{userData.email}</p>
-						<p className="profile-id mt-4">ID: {userData.id}</p>
-					</section>
+					<div className="flex flex-col gap-8">
+						<section className="profile-card px-6 py-6">
+							<p className="profile-label">Profile</p>
+							<h1>
+								{userData.first_name} {userData.last_name}
+							</h1>
+							<p className="status-text mt-2">{userData.email}</p>
+							<p className="profile-id mt-4">ID: {userData.id}</p>
+						</section>
+
+						<section className="profile-card px-6 py-6">
+							<p className="profile-label">My Places</p>
+							{myPlaces.length > 0 ? (
+								<div className="flex flex-col gap-4 mt-4">
+									{myPlaces.map((place) => (
+										<article
+											key={place.id}
+											onClick={() =>
+												navigate(`/place/${place.id}`)
+											}
+											className="favorite-row px-4 py-4 cursor-pointer hover:scale-105 transition-transform flex items-center justify-between"
+										>
+											<div className="flex-1">
+												<p className="font-semibold text-lg">
+													{place.title}
+												</p>
+												<p className="text-sm opacity-75">
+													${place.price}
+												</p>
+											</div>
+											<ChevronRight className="w-5 h-5 opacity-50" />
+										</article>
+									))}
+								</div>
+							) : (
+								<p className="status-text mt-4">
+									You haven't created any places yet.
+								</p>
+							)}
+						</section>
+					</div>
 
 					<section className="profile-card px-6 py-6">
 						<p className="profile-label">Favorites</p>
