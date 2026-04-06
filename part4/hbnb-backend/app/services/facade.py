@@ -31,11 +31,14 @@ class HBnBFacade:
 
     def get_user(self, user_id):
         user = self.user_repo.get(user_id)
+        if not user:
+            return None
         user_data = {
             "id": user.id,
             "first_name": user.first_name,
             "last_name": user.last_name,
             "email": user.email,
+            "is_admin": user.is_admin,
             "favoris": [
                 favori.id
                 for favori in user.favoris

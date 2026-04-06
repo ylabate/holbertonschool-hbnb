@@ -1,6 +1,5 @@
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from flask_restx import Namespace, Resource, fields
-from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from app.services import facade
 
@@ -10,8 +9,7 @@ user_model = api.model(
     "UserModel",
     {
         "email": fields.String(required=True, description="Email of the user"),
-        "password": fields.String(required=True,
-                                  description="Password of the user"),
+        "password": fields.String(required=True, description="Password of the user"),
     },
     strict=True,
 )
@@ -32,16 +30,14 @@ class UserList(Resource):
             return {"error": "Invalid credentials"}, 401
 
         access_token = create_access_token(
-            identity=str(user.id), additional_claims={
-                "is_admin": user.is_admin
-                }
+            identity=str(user.id), additional_claims={"is_admin": user.is_admin}
         )
 
         return {"access_token": access_token}, 200
 
 
 @api.route("/protected")
-@api.doc(security='BearerAuth')
+@api.doc(security="BearerAuth")
 class ProtectedResource(Resource):
     @jwt_required()
     def get(self):
@@ -50,7 +46,4 @@ class ProtectedResource(Resource):
         user = facade.get_user(user_id)
         if not user:
             return {"message": "invalid token"}, 401
-        return {
-            "id": user.id,
-            "is_admin": user.is_admin
-        }, 200
+        return {"id": user["id"], "is_admin": user.get("is_admin", False)}, 200
