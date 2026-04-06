@@ -1,4 +1,4 @@
-import { CircleUserRound, Unplug } from "lucide-react";
+import { CircleUserRound, Unplug, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function Header({ isLoggedIn }) {
@@ -20,7 +20,12 @@ export default function Header({ isLoggedIn }) {
 							HBNB Infinite
 						</h1>
 					</section>
-					<section className="flex-1 flex justify-end">
+					<section className="flex-1 flex justify-end gap-2">
+						{isLoggedIn && (
+							<Link className="user-button" to="/create-place">
+								<Plus size={30} />
+							</Link>
+						)}
 						{isLoggedIn ? (
 							<Link className="user-button" to="/profile">
 								<CircleUserRound size={30} />
