@@ -56,8 +56,3 @@ npm run preview
 - `src/components/`: Reusable UI components (Header, ReviewCard, StarRating, etc.).
 - `src/utils/`: Helper functions (Cookie management).
 - `src/constants.jsx`: Global configuration (API Base URL).
-
-## 📝 Ongoing Development (Todo)
-
-- [x] Implement editing and deleting own reviews.
-- [ ] Add functionality to create or edit places directly from the frontend.
