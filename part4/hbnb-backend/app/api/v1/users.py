@@ -134,6 +134,22 @@ class UserResource(Resource):
         except ValueError as error:
             api.abort(400, error)
 
+    @jwt_required()
+    @api.doc(security="BearerAuth")
+    @api.response(200, "User deleted correctly")
+    @api.response(401, "Missing or invalid token")
+    @api.response(403, "Admin privileges required")
+    def delete(self, user_id):
+        """Delete user and related data (admin only)"""
+        if not get_jwt().get("is_admin"):
+            api.abort(403, "Admin privileges required")
+
+        if not facade.get_user(user_id):
+            api.abort(404, "User doesn't exist")
+
+        facade.delete_user(user_id)
+        return {"message": "User deleted successfully"}, 200
+
 
 @api.route("/<user_id>/<place_id>")
 @api.response(404, "User or place doesn't exist")

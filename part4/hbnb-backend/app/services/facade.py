@@ -53,6 +53,9 @@ class HBnBFacade:
         self.user_repo.update(id, data)
         return self.user_repo.get(id)
 
+    def delete_user(self, user_id):
+        self.user_repo.delete(user_id)
+
     def add_favoris(self, place_id, user_id):
         user = self.user_repo.get(user_id)
         if not user:

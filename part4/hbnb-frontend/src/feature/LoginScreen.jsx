@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { SendHorizontal } from "lucide-react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "@/constants";
 
 export default function LoginScreen({ isLoggedIn, setLoggedIn }) {
 	const navigate = useNavigate();
+	const location = useLocation();
 	const [isRegistering, setIsRegistering] = useState(false);
 	const [firstName, setFirstName] = useState("");
 	const [lastName, setLastName] = useState("");
@@ -12,8 +13,14 @@ export default function LoginScreen({ isLoggedIn, setLoggedIn }) {
 	const [password, setPassword] = useState("");
 	const [status, setStatus] = useState("");
 
+	const redirectTo =
+		typeof location.state?.from === "string" &&
+		location.state.from.startsWith("/")
+			? location.state.from
+			: "/";
+
 	if (isLoggedIn) {
-		return <Navigate to="/" />;
+		return <Navigate to={redirectTo} replace />;
 	}
 
 	async function handleLogin() {
@@ -26,7 +33,7 @@ export default function LoginScreen({ isLoggedIn, setLoggedIn }) {
 		const data = await response.json();
 		if (response.ok) {
 			setLoggedIn(`Bearer ${data.access_token}`);
-			navigate("/");
+			navigate(redirectTo, { replace: true });
 		} else {
 			setStatus(data.message || response.statusText);
 		}

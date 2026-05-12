@@ -23,6 +23,7 @@
 	--fg-on-accent: hsl(220, 15%, 12%);
 	--shadow-panel: 0 12px 30px hsla(220, 20%, 20%, 0.12);
 	--shadow-soft: 0 6px 16px hsla(220, 20%, 20%, 0.08);
+	--surface-highlight: hsla(0, 0%, 100%, 0.6);
 }
 
 /* Dark Theme - Only apply if .dark class is explicitly set */
@@ -47,6 +48,7 @@
 	--fg-on-accent: hsl(220, 15%, 100%);
 	--shadow-panel: 0 12px 30px hsla(0, 0%, 0%, 0.6);
 	--shadow-soft: 0 6px 16px hsla(0, 0%, 0%, 0.4);
+	--surface-highlight: hsla(220, 10%, 100%, 0.05);
 }
 
 h1 {
@@ -132,7 +134,7 @@ body {
 
 .app-shell {
 	background: var(--bg-panel);
-	border: 1px solid hsla(0, 0%, 100%, 0.75);
+	border: 1px solid var(--panel-border);
 	border-radius: 32px;
 	box-shadow: var(--shadow-panel);
 	backdrop-filter: blur(18px);
@@ -150,7 +152,7 @@ body {
 	background: var(--button-brand);
 	border: 1px solid var(--panel-border);
 	border-radius: 16px;
-	box-shadow: inset 0 1px 0 hsla(0, 0%, 100%, 0.5);
+	box-shadow: inset 0 1px 0 var(--surface-highlight);
 	padding: 0.65rem 1rem;
 }
 
@@ -221,11 +223,11 @@ body {
 	backdrop-filter: blur(14px) saturate(1.1);
 	-webkit-backdrop-filter: blur(14px) saturate(1.1);
 	border: 1px solid var(--panel-border);
-	border-radius: 22px;
+	border-radius: 28px;
 	box-shadow: var(--shadow-soft);
 	pointer-events: none;
 	opacity: 1;
-	transition: opacity 0.45s ease;
+	transition: all 0.3s ease;
 }
 
 .action-column-layer-fade {
@@ -242,6 +244,7 @@ body {
 	-webkit-backdrop-filter: blur(12px);
 	border-radius: 22px;
 	box-shadow: var(--shadow-soft);
+	transition: all 0.3s ease;
 }
 
 .icon-chip {
@@ -313,7 +316,7 @@ body {
 
 .login-card {
 	background: var(--bg-panel);
-	border: 1px solid hsla(0, 0%, 100%, 0.75);
+	border: 1px solid var(--panel-border);
 	border-radius: 28px;
 	box-shadow: var(--shadow-panel);
 	max-width: 420px;
@@ -368,7 +371,7 @@ select {
 	background: hsl(0, 0%, 100%);
 	border: 2px solid var(--bg-button);
 	border-radius: 16px;
-	box-shadow: inset 0 1px 0 hsla(0, 0%, 100%, 0.7);
+	box-shadow: inset 0 1px 0 var(--surface-highlight);
 	color: var(--fg);
 	outline: none;
 	padding: 0.85rem 1rem;
@@ -382,7 +385,7 @@ select {
 :root.dark select {
 	background: var(--bg-button);
 	border-color: var(--bg-separator);
-	box-shadow: inset 0 1px 0 hsla(255, 255, 255, 0.05);
+	box-shadow: inset 0 1px 0 var(--surface-highlight);
 	color: var(--fg);
 }
 

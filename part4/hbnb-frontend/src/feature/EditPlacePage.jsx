@@ -1,11 +1,18 @@
 import { useState, useEffect } from "react";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import {
+	Link,
+	Navigate,
+	useLocation,
+	useNavigate,
+	useParams,
+} from "react-router-dom";
 import { API_BASE_URL } from "@/constants";
-import { Search } from "lucide-react";
+import { Search, ArrowLeft } from "lucide-react";
 
-export default function CreatePlacePage({ isLoggedIn }) {
+export default function EditPlacePage({ isLoggedIn }) {
 	const navigate = useNavigate();
 	const location = useLocation();
+	const { id } = useParams();
 	const [title, setTitle] = useState("");
 	const [description, setDescription] = useState("");
 	const [price, setPrice] = useState("");
@@ -17,6 +24,7 @@ export default function CreatePlacePage({ isLoggedIn }) {
 	const [selectedAmenities, setSelectedAmenities] = useState([]);
 	const [status, setStatus] = useState("");
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
 		fetch(`${API_BASE_URL}/amenities/`)
@@ -27,7 +35,30 @@ export default function CreatePlacePage({ isLoggedIn }) {
 				}
 			})
 			.catch((err) => console.error("Failed to fetch amenities", err));
-	}, []);
+
+		if (id) {
+			fetch(`${API_BASE_URL}/places/${id}`)
+				.then(async (response) => {
+					if (!response.ok) throw new Error("Failed to load place");
+					return response.json();
+				})
+				.then((data) => {
+					setTitle(data.title || "");
+					setDescription(data.description || "");
+					setPrice(data.price || "");
+					setLatitude(data.latitude || "");
+					setLongitude(data.longitude || "");
+					if (data.amenities && Array.isArray(data.amenities)) {
+						setSelectedAmenities(data.amenities.map(a => a.id));
+					}
+					setIsLoading(false);
+				})
+				.catch((error) => {
+					setStatus(error.message);
+					setIsLoading(false);
+				});
+		}
+	}, [id]);
 
 	if (!isLoggedIn) {
 		return (
@@ -39,9 +70,9 @@ export default function CreatePlacePage({ isLoggedIn }) {
 		);
 	}
 
-	const handleToggleAmenity = (id) => {
+	const handleToggleAmenity = (amenityId) => {
 		setSelectedAmenities((prev) =>
-			prev.includes(id) ? prev.filter((a) => a !== id) : [...prev, id],
+			prev.includes(amenityId) ? prev.filter((a) => a !== amenityId) : [...prev, amenityId],
 		);
 	};
 
@@ -77,8 +108,8 @@ export default function CreatePlacePage({ isLoggedIn }) {
 		setStatus("");
 
 		try {
-			const response = await fetch(`${API_BASE_URL}/places/`, {
-				method: "POST",
+			const response = await fetch(`${API_BASE_URL}/places/${id}`, {
+				method: "PUT",
 				headers: {
 					"Content-Type": "application/json",
 					Authorization: `${isLoggedIn}`,
@@ -93,12 +124,11 @@ export default function CreatePlacePage({ isLoggedIn }) {
 				}),
 			});
 
-			const data = await response.json();
-
 			if (response.ok) {
-				navigate(`/place/${data.id}`);
+				navigate(`/place/${id}`);
 			} else {
-				setStatus(data.message || "Failed to create place");
+				const data = await response.json();
+				setStatus(data.message || "Failed to update place");
 			}
 		} catch (error) {
 			setStatus(error.message);
@@ -107,11 +137,23 @@ export default function CreatePlacePage({ isLoggedIn }) {
 		}
 	};
 
+	if (isLoading) {
+		return (
+			<main className="page-padding h-full flex items-center justify-center">
+				<h2 className="text-xl">Loading place details...</h2>
+			</main>
+		);
+	}
+
 	return (
 		<main className="page-padding h-full overflow-y-auto w-full">
-			<section className="max-w-2xl mx-auto place-card place-copy p-6 md:p-8 mt-4">
+			<section className="max-w-2xl mx-auto place-card place-copy p-6 md:p-8 mt-4 relative">
+				<Link to="/profile" className="absolute top-6 left-6 icon-chip p-2 hover:scale-110 transition-transform">
+					<ArrowLeft className="w-5 h-5" />
+				</Link>
+
 				<h1 className="text-2xl font-bold mb-6 text-center text-fg">
-					Create a New Place
+					Edit Place
 				</h1>
 
 				<form onSubmit={handleSubmit} className="flex flex-col gap-5">
@@ -151,9 +193,7 @@ export default function CreatePlacePage({ isLoggedIn }) {
 							<input
 								type="text"
 								value={locationQuery}
-								onChange={(e) =>
-									setLocationQuery(e.target.value)
-								}
+								onChange={(e) => setLocationQuery(e.target.value)}
 								className="flex-1"
 								placeholder="e.g. Paris, France or 10 Rue de la Paix"
 								onKeyDown={(e) => {
@@ -230,15 +270,12 @@ export default function CreatePlacePage({ isLoggedIn }) {
 						) : (
 							<div className="flex flex-wrap gap-2">
 								{availableAmenities.map((amenity) => {
-									const isSelected =
-										selectedAmenities.includes(amenity.id);
+									const isSelected = selectedAmenities.includes(amenity.id);
 									return (
 										<button
 											type="button"
 											key={amenity.id}
-											onClick={() =>
-												handleToggleAmenity(amenity.id)
-											}
+											onClick={() => handleToggleAmenity(amenity.id)}
 											className={`amenity-pill cursor-pointer transition-colors border-2 ${
 												isSelected
 													? "border-[var(--accent-pink)] bg-[var(--accent-pink)] text-[var(--fg-on-accent)]"
@@ -258,7 +295,7 @@ export default function CreatePlacePage({ isLoggedIn }) {
 						disabled={isSubmitting}
 						className="primary-button py-3 mt-4 text-lg font-semibold disabled:opacity-60 cursor-pointer"
 					>
-						{isSubmitting ? "Creating..." : "Create Place"}
+						{isSubmitting ? "Updating..." : "Update Place"}
 					</button>
 
 					{status && (

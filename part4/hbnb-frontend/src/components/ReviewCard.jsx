@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Heart, Edit2, Trash2, X, Check } from "lucide-react";
 import StarRating from "@/components/StarRating";
 import { API_BASE_URL } from "@/constants";
@@ -74,9 +75,18 @@ export default function ReviewCard({
     <article className="comment-card flex flex-col gap-3 p-4">
       <section className="flex justify-between items-start">
         <div className="flex flex-col gap-1">
-          <h2 className="font-semibold text-base">
-            {review.user_first_name} {review.user_last_name}
-          </h2>
+          <Link
+            to={`/user/${review.user_id}`}
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+          >
+            <div className="w-8 h-8 rounded-full bg-accent-pink/20 text-accent-pink flex items-center justify-center font-bold text-xs shrink-0">
+              {review.user_first_name?.[0] || "?"}
+              {review.user_last_name?.[0] || ""}
+            </div>
+            <h2 className="font-semibold text-base hover:underline">
+              {review.user_first_name} {review.user_last_name}
+            </h2>
+          </Link>
           {isEditing ? (
             <div className="flex items-center gap-2 mt-1">
               <select

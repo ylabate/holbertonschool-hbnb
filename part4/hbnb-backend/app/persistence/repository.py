@@ -81,6 +81,29 @@ class UserRepository(SQLAlchemyRepository):
         user.favoris.remove(place)
         db.session.commit()
 
+    def delete(self, obj_id):
+        user = self.get(obj_id)
+        if not user:
+            return
+
+        for place in user.favoris.all():
+            user.favoris.remove(place)
+
+        for review in user.reviews.all():
+            db.session.delete(review)
+
+        for place in user.places.all():
+            for favoriting_user in place.favorited_by.all():
+                favoriting_user.favoris.remove(place)
+            for amenity in place.amenities.all():
+                place.amenities.remove(amenity)
+            for review in place.reviews.all():
+                db.session.delete(review)
+            db.session.delete(place)
+
+        db.session.delete(user)
+        db.session.commit()
+
 
 class AmenityRepository(SQLAlchemyRepository):
     def __init__(self):
