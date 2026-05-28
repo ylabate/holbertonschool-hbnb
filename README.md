@@ -115,10 +115,4 @@ This project was developed as part of the **Holberton School** curriculum.
 
 ---
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details (if applicable).
-
----
-
 <p align="center">Made with ❤️ for the Holberton School community.</p>
