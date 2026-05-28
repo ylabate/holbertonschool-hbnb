@@ -1,4 +1,4 @@
-# 🏨 HBnB Evolution: A Full-Stack Property Rental Application
+# 🏨 HBnB: A Full-Stack Property Rental Application
 
 ![Python](https://img.shields.io/badge/Python-3.8+-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Flask](https://img.shields.io/badge/Flask-2.0+-000000?style=for-the-badge&logo=flask&logoColor=white)
@@ -7,7 +7,7 @@
 ![Tailwind](https://img.shields.io/badge/Tailwind-4-06B6D4?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-6-646CFF?style=for-the-badge&logo=vite&logoColor=white)
 
-> **HBnB Evolution** is a comprehensive software engineering project that recreates a property rental platform (AirBnB clone). The project evolves through four distinct phases, starting from architectural design and moving towards a fully functional full-stack application.
+> **HBnB** is a comprehensive software engineering project that recreates a property rental platform (AirBnB clone). The project evolves through four distinct phases, starting from architectural design and moving towards a fully functional full-stack application.
 
 ---
 
@@ -23,7 +23,7 @@ The goal of this project is to build a scalable and modular application while ap
 
 ---
 
-## 🏗️ Project Evolution (Structure)
+## 🏗️ Project  (Structure)
 
 The repository is organized into four main parts, each representing a milestone in the development lifecycle:
 
